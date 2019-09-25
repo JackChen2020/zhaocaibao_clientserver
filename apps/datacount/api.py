@@ -120,6 +120,7 @@ class DataCountAPIView(GenericViewSetCustom):
         ut=UtilTime()
 
         item_count = 7
+
         data2=[]
         data3=[]
 
