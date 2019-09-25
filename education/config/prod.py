@@ -11,6 +11,9 @@ DBNAME = os.environ.get('DBNAME', 'allwin')
 DBUSER = os.environ.get('DBUSER', 'root')
 DBPASS = os.environ.get('DBPASS', '123456')
 
+
+print(DBHOST,DBPORT)
+
 # ===============================================================================
 # 数据库设置
 # ===============================================================================
