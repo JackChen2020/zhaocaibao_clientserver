@@ -28,7 +28,8 @@ router2 = DefaultRouter(trailing_slash=False)
 router2.register('', BusinessNewAPIView, base_name='create_order')
 
 urlpatterns = [
-    path('client_api/', include('apps.urls'))
+    path('client_api/', include('apps.urls')),
+    path('', include(router1.urls)),
 ]
 
 urlpatterns += static('/images/picvercode/',document_root=settings.PICVERCODE_PATH)
