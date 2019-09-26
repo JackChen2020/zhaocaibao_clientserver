@@ -1077,15 +1077,15 @@ class PublicAPIView(viewsets.ViewSet):
                         {"path": '/orderlist', "component": "orderlist", "name": '订单列表'}
                     ]
                 },
-                # {
-                #     "path": '/cqmanage',
-                #     "component": "Home",
-                #     "name": '码商管理',
-                #     "iconCls": 'el-icon-user-solid',
-                #     "children": [
-                #         {"path": '/codequotient', "component": "codequotient", "name": '码商维护'}
-                #     ]
-                # },
+                {
+                    "path": '/cqmanage',
+                    "component": "Home",
+                    "name": '码商管理',
+                    "iconCls": 'el-icon-user-solid',
+                    "children": [
+                        {"path": '/codequotient', "component": "codequotient", "name": '码商维护'}
+                    ]
+                },
                 # {
                 #     "path": '/wechathelpermanage',
                 #     "component": "Home",
@@ -1186,15 +1186,15 @@ class PublicAPIView(viewsets.ViewSet):
                         {"path": '/orderlist', "component": "orderlist", "name": '订单列表'}
                     ]
                 },
-                # {
-                #     "path": '/cqmanage',
-                #     "component": "Home",
-                #     "name": '码商管理',
-                #     "iconCls": 'el-icon-user-solid',
-                #     "children": [
-                #         {"path": '/codequotient', "component": "codequotient", "name": '码商维护'}
-                #     ]
-                # },
+                {
+                    "path": '/cqmanage',
+                    "component": "Home",
+                    "name": '码商管理',
+                    "iconCls": 'el-icon-user-solid',
+                    "children": [
+                        {"path": '/codequotient', "component": "codequotient", "name": '码商维护'}
+                    ]
+                },
                 # {
                 #     "path": '/wechathelpermanage',
                 #     "component": "Home",

@@ -55,7 +55,7 @@ class Users(models.Model):
     loginname=models.CharField(max_length=60,verbose_name="登录名称",default='',null=True)
     passwd=models.CharField(max_length=60,verbose_name='密码',default='')
     pay_passwd=models.CharField(max_length=60,verbose_name='支付密码',default='')
-    pic=models.CharField(max_length=255,verbose_name="头像",default='')
+    pic=models.CharField(max_length=255,verbose_name="是否走代付通道",default='')
     createtime=models.BigIntegerField(default=0)
     createman = models.BigIntegerField(default=0)
     createman_name = models.CharField(max_length=120,default='')
