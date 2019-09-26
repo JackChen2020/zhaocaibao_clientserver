@@ -1434,13 +1434,15 @@ class PublicFileAPIView(viewsets.ViewSet):
                 new_file.write(f.read())
         url = '/nginx_upload/qrcode/%s'%(new_file_name)
 
+
+        print(url_join(url))
+
         decode_res = decode_qr(url_join(url))
 
         print(decode_res)
 
         while not decode_res:
             decode_res=decode_qr(url_join(url))
-            print(decode_res)
 
 
 
