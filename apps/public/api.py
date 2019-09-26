@@ -1383,7 +1383,8 @@ from libs.utils.qrcode import decode_qr
 from apps.utils import url_join
 from apps.user.models import Token
 
-class PublicFileAPIView(viewsets.ViewSet,lock={"resource":LOAD_QRCODE}):
+class PublicFileAPIView(viewsets.ViewSet):
+
 
     @list_route(methods=['POST'])
     @Core_connector_exec(transaction=True)
