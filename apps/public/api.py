@@ -1381,12 +1381,20 @@ class PublicAPIView(viewsets.ViewSet):
 from libs.core.decorator.response import Core_connector_exec
 from libs.utils.qrcode import decode_qr
 from apps.utils import url_join
+from apps.user.models import Token
 
 class PublicFileAPIView(viewsets.ViewSet):
 
     @list_route(methods=['POST'])
     @Core_connector_exec(transaction=True)
     def upload(self,request, *args, **kwargs):
+
+        try:
+            result = Token.objects.get(key=request.data.get("token"))
+        except Token.DoesNotExist:
+            return (None, 'token已失效,请退出后重新登录！', 200, ResCode.TOKEN_NOT)
+
+
 
         tbdfpoolObj = TbDFPool.objects.filter(status__in=[0,1,2,3,5])
 
@@ -1406,7 +1414,7 @@ class PublicFileAPIView(viewsets.ViewSet):
             "amount" : amount,
             "status" : '0',
             "updtime" : 0,
-            "userid" : request.data.get("userid")
+            "userid" : result.userid
         }
 
         tbdfpoolObj=TbDFPool.objects.create(**create_order_dict)
