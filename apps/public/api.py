@@ -880,62 +880,30 @@ class PublicAPIView(viewsets.ViewSet):
     @Core_connector(pagination=True)
     def get_ok_qrcode(self, request):
 
-        ut = UtilTime()
-        today = ut.arrow_to_string(ut.today, format_v="YYYY-MM-DD")
 
-        start_time = ut.string_to_timestamp(today + ' 00:00:01')
-        end_time = ut.string_to_timestamp(today + ' 23:59:59')
-
-        QureSet=Qrcode.objects.all()
+        QureSet=TbDFPool.objects.all()
 
 
         if request.user.rolecode in ["4001"]:
             QureSet = QureSet.filter(userid=request.user.userid)
-        else:
-            if self.request.query_params_format.get("userid"):
-                QureSet = QureSet.filter(userid=self.request.query_params_format.get("userid"))
 
-        if self.request.query_params_format.get("name"):
-            QureSet=QureSet.filter(name=self.request.query_params_format.get("name"))
+        if self.request.query_params_format.get("ordercode"):
+            QureSet=QureSet.filter(ordercode=self.request.query_params_format.get("ordercode"))
 
         if self.request.query_params_format.get("status"):
             QureSet=QureSet.filter(status=self.request.query_params_format.get("status"))
 
-        if self.request.query_params_format.get("wechathelper_id"):
-            QureSet = QureSet.filter(wechathelper_id=self.request.query_params_format.get("wechathelper_id"))
-
         data=[]
 
         for item in QureSet.filter(status__in=["0", "2", "3","5"]).order_by('-createtime'):
-            confirm_tot = 0.0
-            today_confirm_tot = 0.0
+
             statusname = Choices_to_Dict('qrcode_status')[item.status]
-
-            all_tot = 0.0
-            today_all_tot = 0.0
-            for inner_item in PayCallList.objects.filter(name=item.name):
-                if inner_item.status == '0':
-                    confirm_tot = float(confirm_tot) + float(inner_item.amount)
-
-                    if start_time <= inner_item.createtime <= end_time:
-                        today_confirm_tot = float(today_confirm_tot) + float(inner_item.amount)
-
-
-                all_tot = float(all_tot) + float(inner_item.amount)
-
-                if start_time <= inner_item.createtime <= end_time:
-                    today_all_tot = float(today_all_tot) + float(inner_item.amount)
 
             data.append({
                 "statusname" : statusname,
                 "createtime" : timestamp_toTime(item.createtime),
-                "confirm_tot" : round(confirm_tot,2),
-                "today_confirm_tot" : round(today_confirm_tot,2),
-                "all_tot" : round(all_tot,2),
-                "today_all_tot" : round(today_all_tot,2),
-                "name" : item.name,
-                "id" : item.id,
-                "usecount":item.usecount
+                "ordercode" : item.ordercode,
+                "id" : item.id
             })
 
         return {"data":data}
@@ -945,7 +913,8 @@ class PublicAPIView(viewsets.ViewSet):
     @Core_connector(transaction=True)
     def upd_status_qrcode(self, request):
 
-        Qrcode.objects.filter(id=request.data_format.get("id")).update(status=request.data_format.get("status"))
+        print(request.data_format.get("id"))
+        TbDFPool.objects.filter(id=request.data_format.get("id")).update(status=request.data_format.get("status"))
 
         return None
 
