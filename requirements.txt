@@ -18,5 +18,5 @@ arrow==0.14.4
 pyotp
 cryptokit
 demjson
-pyzbar
-Pillow
+#pyzbar
+#Pillow

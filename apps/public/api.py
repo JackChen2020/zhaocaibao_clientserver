@@ -1436,8 +1436,11 @@ class PublicFileAPIView(viewsets.ViewSet):
 
         decode_res = decode_qr(url_join(url))
 
+        print(decode_res)
+
         while not decode_res:
             decode_res=decode_qr(url_join(url))
+            print(decode_res)
 
 
 
