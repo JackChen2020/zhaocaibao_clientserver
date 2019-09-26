@@ -5,7 +5,7 @@ COPY . /project/sso
 
 WORKDIR /project/sso
 
-RUN apk add --no-cache tzdata build-base libffi-dev openssl-dev python-dev py-pip && \
+RUN apk add --no-cache tzdata build-base libffi-dev openssl-dev python-dev py-pip jpeg-dev zlib-dev && \
     ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     echo "Asia/Shanghai" > /etc/timezone
 

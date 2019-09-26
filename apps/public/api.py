@@ -1403,7 +1403,7 @@ class PublicFileAPIView(viewsets.ViewSet):
         print(request.data)
 
         ordercode = file_name.split("_")[0]
-        amount = file_name.split("_")[0]
+        amount = file_name.split("_")[1]
 
         for item in tbdfpoolObj:
             if item.name == ordercode :
