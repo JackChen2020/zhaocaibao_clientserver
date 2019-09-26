@@ -1394,8 +1394,6 @@ class PublicFileAPIView(viewsets.ViewSet):
         except Token.DoesNotExist:
             return (None, 'token已失效,请退出后重新登录！', 200, ResCode.TOKEN_NOT)
 
-
-
         tbdfpoolObj = TbDFPool.objects.filter(status__in=[0,1,2,3,5])
 
         file_name = request.data.get("file_name").split(".")[0]
@@ -1406,7 +1404,7 @@ class PublicFileAPIView(viewsets.ViewSet):
         amount = file_name.split("_")[1]
 
         for item in tbdfpoolObj:
-            if item.name == ordercode :
+            if item.ordercode == ordercode :
                 raise PubErrorCustom("该二维码已经存在,请勿重复上传!")
 
         create_order_dict = {
@@ -1434,12 +1432,7 @@ class PublicFileAPIView(viewsets.ViewSet):
                 new_file.write(f.read())
         url = '/nginx_upload/qrcode/%s'%(new_file_name)
 
-
-        print(url_join(url))
-
         decode_res = decode_qr(url_join(url))
-
-        print(decode_res)
 
         while not decode_res:
             decode_res=decode_qr(url_join(url))
