@@ -1356,7 +1356,7 @@ class PublicFileAPIView(viewsets.ViewSet):
 
 
     @list_route(methods=['POST'])
-    @Core_connector_exec(transaction=True)
+    @Core_connector_exec(transaction=True,lock={"resource":LOAD_QRCODE})
     def upload(self,request, *args, **kwargs):
 
         try:
