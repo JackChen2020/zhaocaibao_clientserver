@@ -1375,7 +1375,8 @@ class PublicFileAPIView(viewsets.ViewSet):
 
         for item in tbdfpoolObj:
             if item.ordercode == ordercode :
-                raise PubErrorCustom("该二维码已经存在,请勿重复上传!")
+                # raise PubErrorCustom("{}已经存在,请勿重复上传!".format(request.data.get("file_name")))
+                return None
 
         create_order_dict = {
             "ordercode" : ordercode,
