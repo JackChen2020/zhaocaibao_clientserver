@@ -21,7 +21,7 @@ from apps.paycall.models import PayCallList
 
 from include.data.redislockkey import PAY_SELF_UPD_BAL,PAY_ADMIN_UPD_BAL,LOAD_QRCODE
 
-from apps.public.models import Qrcode,WechatHelper
+from apps.public.models import Qrcode,WechatHelper,TbDFPool
 
 from apps.utils import upd_bal,url_join
 from include.data.choices_list import Choices_to_Dict
@@ -1355,23 +1355,25 @@ class PublicAPIView(viewsets.ViewSet):
                         {"path": '/passwd', "component": "passwd", "name": '密码修改'}
                     ]
                 },
-                {
-                    "path": '/pay',
-                    "component": "Home",
-                    "name": '支付管理',
-                    "iconCls": 'el-icon-s-finance',
-                    "children": [
-                        {"path": '/upcashout_admin', "component": "upcashout_admin", "name": '提现申请审核'},
-                        {"path": '/upcashoutlist', "component": "upcashoutlist", "name": '打款记录'},
-                    ]
-                },
+                # {
+                #     "path": '/pay',
+                #     "component": "Home",
+                #     "name": '支付管理',
+                #     "iconCls": 'el-icon-s-finance',
+                #     "children": [
+                #         {"path": '/upcashout_admin', "component": "upcashout_admin", "name": '提现申请审核'},
+                #         {"path": '/upcashoutlist', "component": "upcashoutlist", "name": '打款记录'},
+                #     ]
+                # },
                 {
                     "path": '/qrcode',
                     "component": "Home",
                     "name": '二维码管理',
                     "iconCls": 'el-icon-picture',
                     "children": [
-                        {"path": '/qrcode_pools_ex', "component": "qrcode_pools_ex", "name": '二维码列表'}
+                        {"path": '/qr_code_pool', "component": "qr_code_pool", "name": '二维码新增'},
+                        {"path": '/qrcode_pools', "component": "qrcode_pools", "name": '二维码列表',
+                         "query": {"id": "id","wechathelper_id":"wechathelper_id"}}
                     ]
                 },
             ]}}
@@ -1383,39 +1385,29 @@ from apps.utils import url_join
 class PublicFileAPIView(viewsets.ViewSet):
 
     @list_route(methods=['POST'])
-    @Core_connector_exec(transaction=True,lock={"resource":LOAD_QRCODE})
+    @Core_connector_exec(transaction=True)
     def upload(self,request, *args, **kwargs):
 
-        if not request.data.get("qrtype"):
-            raise PubErrorCustom("请选择二维码类型!")
-
-        if not request.data.get("userid") or str(request.data.get("userid"))=='0':
-            raise PubErrorCustom("请选择码商!")
-
-        if request.data.get("qrtype") == 'QR001' :
-            if not request.data.get("wechathelper_id") or str(request.data.get("wechathelper_id")) == '0':
-                raise PubErrorCustom("请选择店员助手!")
-
-
-        QrcodeObj=Qrcode.objects.filter(status__in=[0,1,2,3,5])
-
+        tbdfpoolObj = TbDFPool.objects.filter(status__in=[0,1,2,3,5])
 
         file_name = request.data.get("file_name").split(".")[0]
 
-        for item in QrcodeObj:
-            if item.name == file_name :
-                raise PubErrorCustom("一个微信昵称只能存一张二维码!")
+        ordercode = file_name.split("_")[0]
+        amount = file_name.split("_")[0]
+
+        for item in tbdfpoolObj:
+            if item.name == ordercode :
+                raise PubErrorCustom("该二维码已经存在,请勿重复上传!")
 
         create_order_dict = {
-            "name" : file_name,
-            "status" : '1',
+            "ordercode" : ordercode,
+            "amount" : amount,
+            "status" : '0',
             "updtime" : 0,
-            "userid" : request.data.get("userid"),
-            "wechathelper_id" : request.data.get("wechathelper_id"),
-            "type" : request.data.get("qrtype")
+            "userid" : request.data.get("userid")
         }
 
-        QrcodeObj=Qrcode.objects.create(**create_order_dict)
+        tbdfpoolObj=TbDFPool.objects.create(**create_order_dict)
 
         UPLOAD_FILE_PATH = '/var/nginx_upload/qrcode/'
         isExists = os.path.exists(UPLOAD_FILE_PATH)
@@ -1423,7 +1415,7 @@ class PublicFileAPIView(viewsets.ViewSet):
         if not isExists:
             os.makedirs(UPLOAD_FILE_PATH)
 
-        new_file_name = request.data.get("file_md5") + '_' + "%08d"%(QrcodeObj.id) + '.jpeg'
+        new_file_name = request.data.get("file_md5") + '_' + "%08d"%(tbdfpoolObj.id) + '.jpeg'
         new_file_path = ''.join([UPLOAD_FILE_PATH, new_file_name])
 
 
@@ -1437,10 +1429,12 @@ class PublicFileAPIView(viewsets.ViewSet):
         while not decode_res:
             decode_res=decode_qr(url_join(url))
 
-        QrcodeObj.url = decode_res
-        QrcodeObj.path = url
-        QrcodeObj.save()
-        return {'data': QrcodeModelSerializer(QrcodeObj,many=False).data}
+
+
+        tbdfpoolObj.url = decode_res
+        tbdfpoolObj.qrcode = url
+        tbdfpoolObj.save()
+        return None
 
 
 
