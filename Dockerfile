@@ -2,6 +2,7 @@ FROM tangchen2018/python:3.6-alpine
 ENV PYTHONUNBUFFERED 1
 
 COPY . /project/sso
+COPY /project/sso/libzbar.so.0 /usr/lib/
 
 WORKDIR /project/sso
 
