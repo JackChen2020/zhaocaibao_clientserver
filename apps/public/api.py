@@ -1392,6 +1392,8 @@ class PublicFileAPIView(viewsets.ViewSet):
 
         file_name = request.data.get("file_name").split(".")[0]
 
+        print(request.data)
+
         ordercode = file_name.split("_")[0]
         amount = file_name.split("_")[0]
 
