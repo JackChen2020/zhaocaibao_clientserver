@@ -8,7 +8,7 @@ def decode_qr(qr_url):
     bodys = {}
     url = host + path
 
-    bodys['imgurl'] = '''http://47.56.193.188:80/nginx_upload/qrcode/df844564c507c11caee4a8ee9d92d21d_00000003.jpeg'''
+    bodys['imgurl'] = qr_url
     bodys['version'] = '''1.1'''
 
     headers={
