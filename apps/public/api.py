@@ -903,7 +903,8 @@ class PublicAPIView(viewsets.ViewSet):
                 "statusname" : statusname,
                 "createtime" : timestamp_toTime(item.createtime),
                 "ordercode" : item.ordercode,
-                "id" : item.id
+                "id" : item.id,
+                'amount':item.amount
             })
 
         return {"data":data}
