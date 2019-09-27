@@ -151,8 +151,6 @@ class SysNumber(models.Model):
         verbose_name_plural = verbose_name
         db_table = 'sysnumber'
 
-
-
 class TbDFPool(models.Model):
     id = models.BigAutoField(primary_key=True)
 

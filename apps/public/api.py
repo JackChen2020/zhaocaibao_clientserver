@@ -1139,9 +1139,9 @@ class PublicAPIView(viewsets.ViewSet):
                     "children": [
                         {"path": '/paypass', "component": "paypass", "name": '支付渠道'},
                         {"path": '/paytype', "component": "paytype", "name": '支付方式'},
-                        {"path": '/up_cashout', "component": "up_cashout", "name": '提现申请(码商)'},
-                        {"path": '/upcashoutlist_ss', "component": "upcashoutlist_ss", "name": '提现申请记录(码商)'},
-                        {"path": '/upcashoutlist', "component": "upcashoutlist", "name": '打款记录(码商)'},
+                        # {"path": '/up_cashout', "component": "up_cashout", "name": '提现申请(码商)'},
+                        # {"path": '/upcashoutlist_ss', "component": "upcashoutlist_ss", "name": '提现申请记录(码商)'},
+                        # {"path": '/upcashoutlist', "component": "upcashoutlist", "name": '打款记录(码商)'},
                         {"path": '/cashoutlist_admin', "component": "cashoutlist_admin", "name": '提现申请审核(下游)'},
                         {"path": '/cashoutlist1', "component": "cashoutlist1", "name": '打款记录(下游)'},
                     ]
@@ -1405,10 +1405,8 @@ class PublicFileAPIView(viewsets.ViewSet):
 
         decode_res = decode_qr(url_join(url))
 
-        while not decode_res:
-            decode_res=decode_qr(url_join(url))
-
-
+        if not decode_res:
+            raise PubErrorCustom("上传失败,请稍等再试!")
 
         tbdfpoolObj.url = decode_res
         tbdfpoolObj.qrcode = url

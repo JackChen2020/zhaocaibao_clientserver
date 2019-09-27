@@ -30,7 +30,9 @@ def decode_qr(qr_url):
 
     try:
         html = requests.get('http://api.wwei.cn/dewwei.html', params=params)
-        return json.loads(html.text)['data']['raw_text']
+        print(html.text)
+        # return json.loads(html.text)['data']['raw_text']
+        return json.loads(html.text)['msg']
     except:
         return None
 
