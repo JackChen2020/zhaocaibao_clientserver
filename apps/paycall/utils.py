@@ -108,7 +108,6 @@ class PayCallBase(object) :
             logger.error("金额不符!{},{}".format(float(self.order_obj.amount), self.amount))
             raise PubErrorCustom("金额不符!{},{}".format(float(self.order_obj.amount), self.amount))
 
-    def callback_request_to_server(self):
         """
         进行回调操作
         :return:
@@ -362,6 +361,80 @@ class PayCallBase(object) :
         self.flag = True
         self.handler_after()
         return None
+
+    def callback_request_to_server(self):
+        """
+        进行回调操作
+        :return:
+        """
+
+        try:
+            user = Users.objects.get(userid=self.order_obj.userid)
+        except Users.DoesNotExist:
+            logger.error("订单用户不存在! 用户:{}".format(self.order_obj.userid))
+            raise PubErrorCustom("订单用户不存在!")
+
+        if self.order_obj.lock == '0':
+
+            data_request = {
+                "rescode": "10000",
+                "msg": "回调成功!",
+                "data": {
+                    "ordercode": self.order_obj.ordercode,
+                    "status": '0',
+                    "confirm_amount": float(self.amount),
+                    "pay_time": time.mktime(timezone.now().timetuple()),
+                    "keep_info": demjson.decode(self.order_obj.keep_info)
+                },
+                "ordercode":str(self.order_obj.down_ordercode)
+            }
+
+            headers={
+                "token" : str(self.order_obj.userid),
+                "ordercode": str(self.order_obj.down_ordercode)
+            }
+
+            #天宝报文不加密
+            if user.userid != 4:
+                data_request['data'] = encrypt(json.dumps(data_request['data'], cls=DjangoJSONEncoder),
+                                               user.google_token).decode('utf-8')
+
+            result = send_request(url=urllib.parse.unquote(self.order_obj.notifyurl), method='POST', data=data_request,headers=headers)
+            if not result[0]:
+                logger.error("请求对方服务器错误{}".format(str(result)))
+                self.order_obj.down_status = '2'
+            else:
+                self.order_obj.down_status = '0'
+        else:
+
+            request_data = {
+                "businessid" : str(user.userid),
+                "ordercode" : str(self.order_obj.ordercode),
+                "down_ordercode" : str(self.order_obj.down_ordercode),
+                "amount" : str(self.order_obj.amount),
+                "pay_time" : str(UtilTime().timestamp),
+                "status" : "00"
+            }
+            md5params = "{}{}{}{}{}{}{}".format(
+                user.google_token,
+                request_data['businessid'],
+                request_data['ordercode'],
+                request_data['down_ordercode'],
+                request_data['amount'],
+                request_data['pay_time'],
+                user.google_token)
+            md5params = md5params.encode("utf-8")
+            request_data['sign'] = hashlib.md5(md5params).hexdigest()
+
+            logger.info("验签回调参数:{}{}".format(self.order_obj.notifyurl,request_data))
+            result = request('POST', url=urllib.parse.unquote(self.order_obj.notifyurl), data=request_data , json=request_data, verify=False)
+
+            logger.info("返回值:{}".format(result.text))
+            if result.text != 'SUCCESS':
+                logger.error("请求对方服务器错误{}".format(str(result.text)))
+                self.order_obj.down_status = '2'
+            else:
+                self.order_obj.down_status = '0'
 
 
 class PayCallWechat(PayCallBase):

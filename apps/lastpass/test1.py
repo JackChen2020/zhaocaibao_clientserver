@@ -8,7 +8,7 @@ def decode_qr(qr_url):
     bodys = {}
     url = host + path
 
-    bodys['imgurl'] = '''http://47.56.193.188:80/nginx_upload/qrcode/a20965efddbe739257e0fe258ebbaa7d_00000020.jpeg'''
+    bodys['imgurl'] = qr_url
     bodys['version'] = '''1.1'''
 
     headers={
@@ -26,4 +26,4 @@ if __name__ == '__main__':
 
 
     # 解析网络二维码
-    print(decode_qr('http://47.56.193.188:80/nginx_upload/qrcode/a20965efddbe739257e0fe258ebbaa7d_00000020.jpeg'))
+    print(decode_qr('http://47.56.193.188:80/nginx_upload/qrcode/c5743b67c0e20849577203e604d38b25_00000050.jpeg'))
