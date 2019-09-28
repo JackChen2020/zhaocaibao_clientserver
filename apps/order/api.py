@@ -39,6 +39,9 @@ class OrderAPIView(GenericViewSetCustom):
         if request.query_params_format.get("ordercode"):
             QuerySet = QuerySet.filter(ordercode=request.query_params_format.get("ordercode"))
 
+        if request.query_params_format.get("tbdforder"):
+            QuerySet = QuerySet.filter(tbdforder=request.query_params_format.get("tbdforder"))
+
         if request.query_params_format.get("no"):
             QuerySet = QuerySet.filter(down_ordercode=request.query_params_format.get("no"))
 
