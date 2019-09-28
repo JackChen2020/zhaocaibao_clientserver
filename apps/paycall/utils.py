@@ -216,19 +216,19 @@ class PayCallBase(object) :
             agent_free += amount
         self.order_obj.agentfee = agent_free
 
-        if self.order_obj.paypass in (0, 1):
-            self.init_qrcode_obj(self.order_obj.qr_id)
-            # 码商费用以及码商流水
-            rate = get_Rate(self.qrcode_obj.userid, paytypeid=self.order_obj.paytype, type="2")
-            self.order_obj.codefee = float(self.order_obj.confirm_amount) * float(rate)
-            upd_bal(userid=self.qrcode_obj.userid, bal=self.order_obj.codefee, up_bal=self.amount, memo=memo,
-                    ordercode=self.order_obj.ordercode,flag=True,upd_business_agent_tot=True)
-        else:
-            # 上游聚到服务费
-            paypass = PayPass.objects.get(paypassid=self.order_obj.paypass)
-            rate = get_Rate(paypass.paypassid, paytypeid=self.order_obj.paytype, type="0")
-            self.order_obj.codefee = float(self.order_obj.confirm_amount) * float(rate)
-            paypass.bal = float(paypass.bal) + float(self.order_obj.codefee)
+        # if self.order_obj.paypass in (0, 1):
+        #     self.init_qrcode_obj(self.order_obj.qr_id)
+        #     # 码商费用以及码商流水
+        #     rate = get_Rate(self.qrcode_obj.userid, paytypeid=self.order_obj.paytype, type="2")
+        #     self.order_obj.codefee = float(self.order_obj.confirm_amount) * float(rate)
+        #     upd_bal(userid=self.qrcode_obj.userid, bal=self.order_obj.codefee, up_bal=self.amount, memo=memo,
+        #             ordercode=self.order_obj.ordercode,flag=True,upd_business_agent_tot=True)
+        # else:
+        # 上游聚到服务费
+        paypass = PayPass.objects.get(paypassid=self.order_obj.paypass)
+        rate = get_Rate(paypass.paypassid, paytypeid=self.order_obj.paytype, type="0")
+        self.order_obj.codefee = float(self.order_obj.confirm_amount) * float(rate)
+        paypass.bal = float(paypass.bal) + float(self.order_obj.codefee)
 
 
         # 咱们自己的收入
@@ -272,18 +272,18 @@ class PayCallBase(object) :
         获取码商/上游费用
         :return:
         """
-        if self.order_obj.paypass in (0, 1):
-            # 码商费用以及码商流水
-            rate = get_Rate(self.qrcode_obj.userid, paytypeid=self.order_obj.paytype, type="2")
-            self.order_obj.codefee = float(self.order_obj.confirm_amount) * float(rate)
-            upd_bal(userid=self.qrcode_obj.userid, bal=self.order_obj.codefee, up_bal=self.amount, memo="扫码",
-                    ordercode=self.order_obj.ordercode, flag=True, upd_business_agent_tot=True)
-        else:
-            # 上游聚到服务费
-            paypass = PayPass.objects.get(paypassid=self.order_obj.paypass)
-            rate = get_Rate(paypass.paypassid, paytypeid=self.order_obj.paytype, type="0")
-            self.order_obj.codefee = float(self.order_obj.confirm_amount) * float(rate)
-            paypass.bal = float(paypass.bal) + float(self.order_obj.codefee)
+        # if self.order_obj.paypass in (0, 1):
+        #     # 码商费用以及码商流水
+        #     rate = get_Rate(self.qrcode_obj.userid, paytypeid=self.order_obj.paytype, type="2")
+        #     self.order_obj.codefee = float(self.order_obj.confirm_amount) * float(rate)
+        #     upd_bal(userid=self.qrcode_obj.userid, bal=self.order_obj.codefee, up_bal=self.amount, memo="扫码",
+        #             ordercode=self.order_obj.ordercode, flag=True, upd_business_agent_tot=True)
+        # else:
+        # 上游聚到服务费
+        paypass = PayPass.objects.get(paypassid=self.order_obj.paypass)
+        rate = get_Rate(paypass.paypassid, paytypeid=self.order_obj.paytype, type="0")
+        self.order_obj.codefee = float(self.order_obj.confirm_amount) * float(rate)
+        paypass.bal = float(paypass.bal) + float(self.order_obj.codefee)
 
     def get_myfee(self):
         """
