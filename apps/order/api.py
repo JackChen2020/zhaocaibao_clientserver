@@ -145,21 +145,7 @@ class OrderAPIView(GenericViewSetCustom):
         else:
             raise PubErrorCustom("订单号不能为空")
 
-        if order.paypass in (0, 1):
-            if order.qr_type == 'QR001':
-                PayCallWechat().handwork_run(order=order)
-            elif order.qr_type == 'QR005':
-                PayCallFlm().handwork_run(order=order)
-            elif order.qr_type == 'QR010':
-                PayCallNxys().handwork_run(order=order)
-            elif order.qr_type == 'QR015':
-                PayCallJyys().handwork_run(order=order)
-            elif order.qr_type == 'QR020':
-                PayCallZjnx().handwork_run(order=order)
-            elif order.qr_type == 'QR025':
-                PayCallYzf().handwork_run(order=order)
-        else:
-            PayCallLastPass().handwork_run(order=order)
+        PayCallLastPass().handwork_run(order=order)
 
 
     @list_route(methods=['POST'])
